@@ -15,6 +15,7 @@
 		EC81B149203E9F0600F01D4F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EC81B148203E9F0600F01D4F /* main.m */; };
 		EC81B153203E9F0600F01D4F /* PDNavigationControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EC81B152203E9F0600F01D4F /* PDNavigationControllerTests.m */; };
 		EC81B15E203E9F0600F01D4F /* PDNavigationControllerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = EC81B15D203E9F0600F01D4F /* PDNavigationControllerUITests.m */; };
+		EC81B16E203E9F6700F01D4F /* PDNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = EC81B16D203E9F6700F01D4F /* PDNavigationController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,8 @@
 		EC81B159203E9F0600F01D4F /* PDNavigationControllerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PDNavigationControllerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC81B15D203E9F0600F01D4F /* PDNavigationControllerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PDNavigationControllerUITests.m; sourceTree = "<group>"; };
 		EC81B15F203E9F0600F01D4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EC81B16C203E9F6700F01D4F /* PDNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDNavigationController.h; sourceTree = "<group>"; };
+		EC81B16D203E9F6700F01D4F /* PDNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PDNavigationController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +104,7 @@
 		EC81B138203E9F0600F01D4F /* PDNavigationController */ = {
 			isa = PBXGroup;
 			children = (
+				EC81B16B203E9F3D00F01D4F /* Source */,
 				EC81B139203E9F0600F01D4F /* AppDelegate.h */,
 				EC81B13A203E9F0600F01D4F /* AppDelegate.m */,
 				EC81B13C203E9F0600F01D4F /* ViewController.h */,
@@ -130,6 +134,15 @@
 				EC81B15F203E9F0600F01D4F /* Info.plist */,
 			);
 			path = PDNavigationControllerUITests;
+			sourceTree = "<group>";
+		};
+		EC81B16B203E9F3D00F01D4F /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				EC81B16C203E9F6700F01D4F /* PDNavigationController.h */,
+				EC81B16D203E9F6700F01D4F /* PDNavigationController.m */,
+			);
+			path = Source;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -268,6 +281,7 @@
 				EC81B13E203E9F0600F01D4F /* ViewController.m in Sources */,
 				EC81B149203E9F0600F01D4F /* main.m in Sources */,
 				EC81B13B203E9F0600F01D4F /* AppDelegate.m in Sources */,
+				EC81B16E203E9F6700F01D4F /* PDNavigationController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
