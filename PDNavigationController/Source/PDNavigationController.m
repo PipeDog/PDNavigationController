@@ -73,7 +73,7 @@ static CGFloat const kScreenshotImageOriginalLeft = -150.f;
 - (NSArray *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated {
     NSInteger index = [self.viewControllers indexOfObject:viewController];
     if (index != NSNotFound) {
-        [self.screenshotStack removeObjectsInRange:NSMakeRange(index + 1, self.viewControllers.count - index - 1)];
+        [self.screenshotStack removeObjectsInRange:NSMakeRange(index, self.viewControllers.count - index - 1)];
     }
     return [super popToViewController:viewController animated:animated];
 }

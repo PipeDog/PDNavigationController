@@ -15,6 +15,8 @@ static inline UIColor *random_color() {
     return [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1];
 }
 
+static NSInteger kPageCount = 0;
+
 @interface ViewController ()
 
 @end
@@ -26,12 +28,34 @@ static inline UIColor *random_color() {
     // Do any additional setup after loading the view, typically from a nib.
     self.view.backgroundColor = random_color();
     self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+    
+    self.title = [NSString stringWithFormat:@"%zd", kPageCount];
+    kPageCount += 1;
 }
 
-- (IBAction)gotoNextPage:(id)sender {
+- (IBAction)pushToNextPage:(id)sender {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"vc"];
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (IBAction)popToRootPage:(id)sender {
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
+- (IBAction)popToPage:(id)sender {
+    kPageCount = 2;
+    
+    for (UIViewController *vc in self.navigationController.viewControllers) {
+        if ([vc.title integerValue] == kPageCount) {
+            [self.navigationController popToViewController:vc animated:YES];
+            break;
+        }
+    }
+}
+
+- (IBAction)popToLastPage:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end
