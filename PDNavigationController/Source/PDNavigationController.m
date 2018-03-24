@@ -76,7 +76,7 @@ static CGFloat const kScreenshotImageOriginalLeft = -150.f;
         NSUInteger loc = index;
         NSUInteger len = self.viewControllers.count - index - 1;
         
-        if (loc + len > self.screenshotStack.count) {
+        if (loc + len > self.screenshotStack.count) { // loc + len cannot greater than screenshotStack.count.
             len = self.screenshotStack.count - loc;
         }
         [self.screenshotStack removeObjectsInRange:NSMakeRange(loc, len)];
