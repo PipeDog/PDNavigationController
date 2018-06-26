@@ -44,7 +44,7 @@ static NSInteger kPageCount = 0;
 }
 
 - (IBAction)popToPage:(id)sender {
-    kPageCount = 0;
+    kPageCount = 2;
     
     for (UIViewController *vc in self.navigationController.viewControllers) {
         if ([vc.title integerValue] == kPageCount) {

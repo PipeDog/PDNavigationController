@@ -71,13 +71,27 @@ static CGFloat const kScreenshotImageOriginalLeft = -150.f;
 }
 
 - (NSArray *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    NSUInteger index = [self.viewControllers indexOfObject:viewController];
-    if (index != NSNotFound) {
-        NSUInteger loc = index;
-        NSUInteger len = self.viewControllers.count - index - 1;
+    NSArray<UIViewController *> *pages = [self.viewControllers copy];
+    UIViewController *page = viewController;
+    
+    NSInteger index = 0;
+    BOOL hasFounded = NO;
+    
+    for (NSInteger i = 0; i < pages.count; i ++) {
+        if (page == pages[i]) {
+            index = i;
+            hasFounded = YES;
+            break;
+        }
+    }
+    
+    if (hasFounded) {
+        NSInteger loc = index;
+        NSInteger len = MAX((pages.count - index - 1), 0);
+        NSInteger screenshotCount = self.screenshotStack.count;
         
-        if (loc + len > self.screenshotStack.count) { // loc + len cannot greater than screenshotStack.count.
-            len = self.screenshotStack.count - loc;
+        if (loc + len > screenshotCount) { // loc + len cannot greater than screenshotStack.count.
+            len = MAX((screenshotCount - loc), 0);
         }
         [self.screenshotStack removeObjectsInRange:NSMakeRange(loc, len)];
     }
