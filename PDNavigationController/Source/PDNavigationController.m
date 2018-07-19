@@ -90,10 +90,9 @@ static CGFloat const kScreenshotImageOriginalLeft = -150.f;
         NSInteger len = MAX((pages.count - index - 1), 0);
         NSInteger screenshotCount = self.screenshotStack.count;
         
-        if (loc + len > screenshotCount) { // loc + len cannot greater than screenshotStack.count.
-            len = MAX((screenshotCount - loc), 0);
+        if (screenshotCount >= (loc + len)) {
+            [self.screenshotStack removeObjectsInRange:NSMakeRange(loc, len)];
         }
-        [self.screenshotStack removeObjectsInRange:NSMakeRange(loc, len)];
     }
     return [super popToViewController:viewController animated:animated];
 }
