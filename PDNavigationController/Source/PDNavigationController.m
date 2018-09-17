@@ -14,6 +14,7 @@
 #define kKeyWindow [[UIApplication sharedApplication] keyWindow]
 
 static CGFloat const kScreenshotImageOriginalLeft = -150.f;
+static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
 
 @interface PDNavigationController () <UIGestureRecognizerDelegate>
 
@@ -53,10 +54,60 @@ static CGFloat const kScreenshotImageOriginalLeft = -150.f;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(paningGestureReceive:)];
+    self.interactivePopGestureRecognizer.enabled = NO;
+
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(paningGestureReceive:)];
     pan.delegate = self;
     [self.view addGestureRecognizer:pan];
+}
+
+#pragma mark - Custom Methods
+- (void)popViewControllerAnimated:(BOOL)animated completion:(void (^)(__kindof UIViewController *))completion {
+    if (!animated) {
+        UIViewController *viewController = [self popViewControllerAnimated:animated];
+        if (completion) completion(viewController);
+        return;
+    }
+    
+    [self preparePop];
+    
+    self.blackMaskView.alpha = kBlackMaskViewOriginAlpha;
+
+    [self animateForPopEndingWithBlock:^(UIViewController *viewController) {
+        if (completion) completion(viewController);
+    }];
+}
+
+- (void)popToViewController:(UIViewController *)viewController animated:(BOOL)animated completion:(void (^)(NSArray<__kindof UIViewController *> *))completion {
+    if (!animated) {
+        NSArray<__kindof UIViewController *> *viewControllers = [self popToViewController:viewController animated:animated];
+        if (completion) completion(viewControllers);
+        return;
+    }
+    
+    [self preparePop];
+    
+    self.blackMaskView.alpha = kBlackMaskViewOriginAlpha;
+    
+    [self animateForPopEndingWithBlock:^(NSArray *viewControllers) {
+        if (completion) completion(viewControllers);
+    } toViewController:viewController];
+}
+
+- (void)popToRootViewControllerAnimated:(BOOL)animated completion:(void (^)(NSArray<__kindof UIViewController *> *))completion {
+    if (!animated) {
+        NSArray<__kindof UIViewController *> *viewControllers = [self popToRootViewControllerAnimated:animated];
+        if (completion) completion(viewControllers);
+        return;
+    }
+    
+    [self preparePop];
+    
+    self.blackMaskView.alpha = kBlackMaskViewOriginAlpha;
+
+    [self animateForPopToRootViewControllerWithBlock:^(NSArray<UIViewController *> *viewControllers) {
+        if (completion) completion(viewControllers);
+    }];
 }
 
 #pragma mark - Override Methods
@@ -71,23 +122,11 @@ static CGFloat const kScreenshotImageOriginalLeft = -150.f;
 }
 
 - (NSArray *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    NSArray<UIViewController *> *pages = [self.viewControllers copy];
-    UIViewController *page = viewController;
+    NSUInteger index = [self.viewControllers indexOfObject:viewController];
     
-    NSInteger index = 0;
-    BOOL hasFounded = NO;
-    
-    for (NSInteger i = 0; i < pages.count; i ++) {
-        if (page == pages[i]) {
-            index = i;
-            hasFounded = YES;
-            break;
-        }
-    }
-    
-    if (hasFounded) {
+    if (index != NSNotFound) {
         NSInteger loc = index;
-        NSInteger len = MAX((pages.count - index - 1), 0);
+        NSInteger len = MAX((self.viewControllers.count - index - 1), 0);
         NSInteger screenshotCount = self.screenshotStack.count;
         
         if (screenshotCount >= (loc + len)) {
@@ -100,38 +139,6 @@ static CGFloat const kScreenshotImageOriginalLeft = -150.f;
 - (NSArray<UIViewController *> *)popToRootViewControllerAnimated:(BOOL)animated {
     [self.screenshotStack removeAllObjects];
     return [super popToRootViewControllerAnimated:animated];
-}
-
-#pragma mark - Utility Methods
-- (UIImage *)capture {
-    UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, self.view.opaque, 0.0);
-    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return image;
-}
-
-- (void)moveViewWithX:(CGFloat)x {
-    x = MIN(x, self.view.bounds.size.width);
-    x = MAX(x, 0);
-    
-    CGRect frame = self.view.frame;
-    frame.origin.x = x;
-    self.view.frame = frame;
-    
-    float alpha = 0.4 - (x / 800);
-    
-    self.blackMaskView.alpha = alpha;
-    
-    CGFloat aa = ABS(kScreenshotImageOriginalLeft) / kScreenWidth;
-    CGFloat y = x * aa;
-    
-    CGRect rect = self.screenShotImageView.frame;
-    
-    self.screenShotImageView.frame = CGRectMake(kScreenshotImageOriginalLeft + y,
-                                                0,
-                                                CGRectGetWidth(rect),
-                                                CGRectGetHeight(rect));
 }
 
 #pragma mark - Gesture Recognizer Methods
@@ -160,24 +167,8 @@ static CGFloat const kScreenshotImageOriginalLeft = -150.f;
 }
 
 - (void)_panGestureRecognizerBegan:(UIPanGestureRecognizer *)sender {
-    self.moving = YES;
     self.startTouchPoint = [sender locationInView:kKeyWindow];
-    
-    self.backgroundView.hidden = NO;
-    
-    if (self.screenShotImageView.superview) {
-        [self.screenShotImageView removeFromSuperview];
-    }
-    UIImage *screenShot = [self.screenshotStack lastObject];
-    self.screenShotImageView.image = screenShot;
-    
-    CGRect rect = CGRectMake(kScreenshotImageOriginalLeft,
-                             0,
-                             CGRectGetWidth(self.view.bounds),
-                             CGRectGetHeight(self.view.bounds));
-    
-    self.screenShotImageView.frame = rect;
-    [self.backgroundView insertSubview:self.screenShotImageView belowSubview:self.blackMaskView];
+    [self preparePop];
 }
 
 - (void)_panGestureRecognizerChanged:(UIPanGestureRecognizer *)sender {
@@ -191,18 +182,7 @@ static CGFloat const kScreenshotImageOriginalLeft = -150.f;
     CGPoint touchPoint = [sender locationInView:kKeyWindow];
     
     if (touchPoint.x - self.startTouchPoint.x > kScreenWidth / 3.f) {
-        [UIView animateWithDuration:0.2 animations:^{
-            [self moveViewWithX:kScreenWidth];
-        } completion:^(BOOL finished) {
-            [self popViewControllerAnimated:NO];
-            
-            CGRect frame = self.view.frame;
-            frame.origin.x = 0;
-            self.view.frame = frame;
-            
-            self.moving = NO;
-            self.backgroundView.hidden = YES;
-        }];
+        [self animateForPopEndingWithBlock:nil];
     } else {
         [UIView animateWithDuration:0.2 animations:^{
             [self moveViewWithX:0];
@@ -219,6 +199,130 @@ static CGFloat const kScreenshotImageOriginalLeft = -150.f;
     } completion:^(BOOL finished) {
         self.moving = NO;
         self.backgroundView.hidden = YES;
+    }];
+}
+
+#pragma mark - Tool Methods
+- (void)moveViewWithX:(CGFloat)x {
+    x = MIN(x, self.view.bounds.size.width);
+    x = MAX(x, 0);
+    
+    CGRect frame = self.view.frame;
+    frame.origin.x = x;
+    self.view.frame = frame;
+    
+    float alpha = kBlackMaskViewOriginAlpha - (x / 800.f);
+    self.blackMaskView.alpha = alpha;
+    
+    CGFloat aa = ABS(kScreenshotImageOriginalLeft) / kScreenWidth;
+    CGFloat y = x * aa;
+    
+    CGRect rect = self.screenShotImageView.frame;
+    
+    self.screenShotImageView.frame = CGRectMake(kScreenshotImageOriginalLeft + y,
+                                                0,
+                                                CGRectGetWidth(rect),
+                                                CGRectGetHeight(rect));
+}
+
+- (UIImage *)capture {
+    UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, self.view.opaque, 0.0);
+    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+- (void)preparePop {
+    self.moving = YES;
+    self.backgroundView.hidden = NO;
+    
+    if (self.screenShotImageView.superview) {
+        [self.screenShotImageView removeFromSuperview];
+    }
+    UIImage *screenShot = [self.screenshotStack lastObject];
+    self.screenShotImageView.image = screenShot;
+    
+    CGRect rect = CGRectMake(kScreenshotImageOriginalLeft,
+                             0,
+                             CGRectGetWidth(self.view.bounds),
+                             CGRectGetHeight(self.view.bounds));
+    self.screenShotImageView.frame = rect;
+    [self.backgroundView insertSubview:self.screenShotImageView belowSubview:self.blackMaskView];
+}
+
+- (void)animateForPopEndingWithBlock:(void (^)(UIViewController *viewController))block {
+    [UIView animateWithDuration:0.2 animations:^{
+        [self moveViewWithX:kScreenWidth];
+    } completion:^(BOOL finished) {
+        UIViewController *viewController = [self popViewControllerAnimated:NO];
+        
+        CGRect frame = self.view.frame;
+        frame.origin.x = 0;
+        self.view.frame = frame;
+        
+        self.moving = NO;
+        self.backgroundView.hidden = YES;
+        
+        if (block) block(viewController);
+    }];
+}
+
+- (void)animateForPopEndingWithBlock:(void (^)(NSArray<UIViewController *> *viewControllers))block toViewController:(UIViewController *)viewController {
+    UIImage *capture = nil;
+    NSUInteger index = [self.viewControllers indexOfObject:viewController];
+    
+    if (self.screenshotStack.count > index) {
+        capture = self.screenshotStack[index];
+    }
+    
+    if (!capture) {
+        // If can not get a matching image, use system animation.
+        NSArray<UIViewController *> *viewControllers = [self popToViewController:viewController animated:YES];
+        if (block) block(viewControllers);
+        return;
+    }
+    
+    self.screenShotImageView.image = capture;
+
+    [UIView animateWithDuration:0.2 animations:^{
+        [self moveViewWithX:kScreenWidth];
+    } completion:^(BOOL finished) {
+        NSArray<UIViewController *> *viewControllers = [self popToViewController:viewController animated:NO];
+        CGRect frame = self.view.frame;
+        frame.origin.x = 0;
+        self.view.frame = frame;
+
+        self.moving = NO;
+        self.backgroundView.hidden = YES;
+
+        if (block) block(viewControllers);
+    }];
+}
+
+- (void)animateForPopToRootViewControllerWithBlock:(void (^)(NSArray<UIViewController *> *viewControllers))block {
+    UIImage *capture = self.screenshotStack.firstObject;
+
+    if (!capture) {
+        NSArray<UIViewController *> *viewControllers = [self popToRootViewControllerAnimated:YES];
+        if (block) block(viewControllers);
+        return;
+    }
+
+    self.screenShotImageView.image = capture;
+    
+    [UIView animateWithDuration:0.2 animations:^{
+        [self moveViewWithX:kScreenWidth];
+    } completion:^(BOOL finished) {
+        NSArray<UIViewController *> *viewControllers = [self popToRootViewControllerAnimated:NO];
+        CGRect frame = self.view.frame;
+        frame.origin.x = 0;
+        self.view.frame = frame;
+        
+        self.moving = NO;
+        self.backgroundView.hidden = YES;
+        
+        if (block) block(viewControllers);
     }];
 }
 
@@ -253,6 +357,14 @@ static CGFloat const kScreenshotImageOriginalLeft = -150.f;
         _screenShotImageView = [[UIImageView alloc] init];
     }
     return _screenShotImageView;
+}
+
+@end
+
+@implementation UIViewController (Properties)
+
+- (PDNavigationController *)navigationPage {
+    return (PDNavigationController *)self.navigationController;
 }
 
 @end

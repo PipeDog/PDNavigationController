@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EC3CAB3D214FA3780004A8EA /* UIViewController+PDAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = EC3CAB3C214FA3780004A8EA /* UIViewController+PDAdd.m */; };
 		EC81B13B203E9F0600F01D4F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EC81B13A203E9F0600F01D4F /* AppDelegate.m */; };
 		EC81B13E203E9F0600F01D4F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EC81B13D203E9F0600F01D4F /* ViewController.m */; };
 		EC81B141203E9F0600F01D4F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC81B13F203E9F0600F01D4F /* Main.storyboard */; };
@@ -36,6 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EC3CAB3B214FA3780004A8EA /* UIViewController+PDAdd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+PDAdd.h"; sourceTree = "<group>"; };
+		EC3CAB3C214FA3780004A8EA /* UIViewController+PDAdd.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+PDAdd.m"; sourceTree = "<group>"; };
 		EC81B136203E9F0600F01D4F /* PDNavigationController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PDNavigationController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC81B139203E9F0600F01D4F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		EC81B13A203E9F0600F01D4F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -139,6 +142,8 @@
 		EC81B16B203E9F3D00F01D4F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				EC3CAB3B214FA3780004A8EA /* UIViewController+PDAdd.h */,
+				EC3CAB3C214FA3780004A8EA /* UIViewController+PDAdd.m */,
 				EC81B16C203E9F6700F01D4F /* PDNavigationController.h */,
 				EC81B16D203E9F6700F01D4F /* PDNavigationController.m */,
 			);
@@ -279,6 +284,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC81B13E203E9F0600F01D4F /* ViewController.m in Sources */,
+				EC3CAB3D214FA3780004A8EA /* UIViewController+PDAdd.m in Sources */,
 				EC81B149203E9F0600F01D4F /* main.m in Sources */,
 				EC81B13B203E9F0600F01D4F /* AppDelegate.m in Sources */,
 				EC81B16E203E9F6700F01D4F /* PDNavigationController.m in Sources */,

@@ -8,13 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
-/**
- * Use PDNavigationController, you should set the pop gesture of the system to NO.
- * @eg:
-        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
- */
 @interface PDNavigationController : UINavigationController
 
-@property (nonatomic, assign) BOOL canDragBack; // default is YES
+@property (nonatomic, assign) BOOL canDragBack; ///< Default is YES.
+
+- (void)popViewControllerAnimated:(BOOL)animated completion:(void (^)(__kindof UIViewController *viewController))completion;
+
+- (void)popToViewController:(UIViewController *)viewController animated:(BOOL)animated completion:(void (^)(NSArray<__kindof UIViewController *> *viewControllers))completion;
+
+- (void)popToRootViewControllerAnimated:(BOOL)animated completion:(void (^)(NSArray<__kindof UIViewController *> *viewControllers))completion;
+
+@end
+
+@interface UIViewController (Properties)
+
+@property (nonatomic, readonly, nullable) PDNavigationController *navigationPage;
 
 @end

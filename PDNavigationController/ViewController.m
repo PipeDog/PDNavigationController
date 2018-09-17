@@ -7,6 +7,8 @@
 //
 
 #import "ViewController.h"
+#import "PDNavigationController.h"
+#import "UIViewController+PDAdd.h"
 
 static inline UIColor *random_color() {
     CGFloat hue = arc4random() % 100 / 100.0;
@@ -17,7 +19,7 @@ static inline UIColor *random_color() {
 
 static NSInteger kPageCount = 0;
 
-@interface ViewController ()
+@interface ViewController () <PDBackButtonEventProtocol>
 
 @end
 
@@ -27,8 +29,7 @@ static NSInteger kPageCount = 0;
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     self.view.backgroundColor = random_color();
-    self.navigationController.interactivePopGestureRecognizer.enabled = NO;
-    
+
     self.title = [NSString stringWithFormat:@"%zd", kPageCount];
     kPageCount += 1;
 }
@@ -40,7 +41,8 @@ static NSInteger kPageCount = 0;
 }
 
 - (IBAction)popToRootPage:(id)sender {
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    kPageCount = 0;
+    [self.navigationPage popToRootViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)popToPage:(id)sender {
@@ -48,14 +50,27 @@ static NSInteger kPageCount = 0;
     
     for (UIViewController *vc in self.navigationController.viewControllers) {
         if ([vc.title integerValue] == kPageCount) {
-            [self.navigationController popToViewController:vc animated:YES];
+            [self.navigationPage popToViewController:vc animated:YES completion:nil];
             break;
         }
     }
 }
 
 - (IBAction)popToLastPage:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationPage popViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - PDBackButtonEventProtocol
+- (BOOL)specialBackButtonEvent {
+    [self.navigationPage popViewControllerAnimated:YES completion:nil];
+    NSLog(@"===> %s", __FUNCTION__);
+    return NO;
+}
+
+- (BOOL)regularBackButtonEvent {
+    [self.navigationPage popViewControllerAnimated:YES completion:nil];
+    NSLog(@"===> %s", __FUNCTION__);
+    return NO;
 }
 
 @end
