@@ -8,7 +8,22 @@
 
 #import "UIViewController+PDAdd.h"
 
+static inline void dispatch_async_safe_main(dispatch_block_t block) {
+    if (strcmp(dispatch_queue_get_label(dispatch_get_main_queue()),
+               dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL))) {
+        if (block) block();
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (block) block();
+        });
+    }
+}
+
 @implementation UIViewController (PDAdd)
+
+@end
+
+@interface UINavigationController (PDAdd) <UINavigationBarDelegate>
 
 @end
 
@@ -29,7 +44,7 @@
     }
     
     if (shouldPop) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async_safe_main(^{
             [self popViewControllerAnimated:YES];
         });
     } else {

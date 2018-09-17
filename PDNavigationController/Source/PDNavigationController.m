@@ -252,7 +252,7 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
 }
 
 - (void)animateForPopEndingWithBlock:(void (^)(UIViewController *viewController))block {
-    [UIView animateWithDuration:0.2 animations:^{
+    [UIView animateWithDuration:0.35f animations:^{
         [self moveViewWithX:kScreenWidth];
     } completion:^(BOOL finished) {
         UIViewController *viewController = [self popViewControllerAnimated:NO];
@@ -285,7 +285,7 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
     
     self.screenShotImageView.image = capture;
 
-    [UIView animateWithDuration:0.2 animations:^{
+    [UIView animateWithDuration:0.35f animations:^{
         [self moveViewWithX:kScreenWidth];
     } completion:^(BOOL finished) {
         NSArray<UIViewController *> *viewControllers = [self popToViewController:viewController animated:NO];
@@ -311,7 +311,7 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
 
     self.screenShotImageView.image = capture;
     
-    [UIView animateWithDuration:0.2 animations:^{
+    [UIView animateWithDuration:0.35f animations:^{
         [self moveViewWithX:kScreenWidth];
     } completion:^(BOOL finished) {
         NSArray<UIViewController *> *viewControllers = [self popToRootViewControllerAnimated:NO];
