@@ -10,7 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <math.h>
 
-#define kScreenWidth [[UIScreen mainScreen]bounds].size.width
+#define kScreenWidth [[UIScreen mainScreen] bounds].size.width
 #define kKeyWindow [[UIApplication sharedApplication] keyWindow]
 
 static CGFloat const kScreenshotImageOriginalLeft = -150.f;
