@@ -8,12 +8,12 @@
 
 #import "UIViewController+PDAdd.h"
 
-static inline void dispatch_async_safe_main(dispatch_block_t block) {
-    if (strcmp(dispatch_queue_get_label(dispatch_get_main_queue()),
+static inline void dispatch_async_safe(dispatch_queue_t queue, dispatch_block_t block) {
+    if (strcmp(dispatch_queue_get_label(queue),
                dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL))) {
         if (block) block();
     } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(queue, ^{
             if (block) block();
         });
     }
@@ -44,7 +44,7 @@ static inline void dispatch_async_safe_main(dispatch_block_t block) {
     }
     
     if (shouldPop) {
-        dispatch_async_safe_main(^{
+        dispatch_async_safe(dispatch_get_main_queue(), ^{
             [self popViewControllerAnimated:YES];
         });
     } else {
