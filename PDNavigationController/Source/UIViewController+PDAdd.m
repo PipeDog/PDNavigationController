@@ -9,8 +9,8 @@
 #import "UIViewController+PDAdd.h"
 
 static inline void dispatch_async_safe(dispatch_queue_t queue, dispatch_block_t block) {
-    if (strcmp(dispatch_queue_get_label(queue),
-               dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL))) {
+    if (0 == strcmp(dispatch_queue_get_label(queue),
+                    dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL))) {
         if (block) block();
     } else {
         dispatch_async(queue, ^{

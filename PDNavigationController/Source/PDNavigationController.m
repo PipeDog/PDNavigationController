@@ -152,17 +152,20 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
 - (void)paningGestureReceive:(UIPanGestureRecognizer *)sender {
     if (self.viewControllers.count <= 1 || !self.canDragBack) return;
     
-    if (sender.state == UIGestureRecognizerStateBegan) {
-        [self _panGestureRecognizerBegan:sender];
-    }
-    else if (sender.state == UIGestureRecognizerStateChanged) {
-        [self _panGestureRecognizerChanged:sender];
-    }
-    else if (sender.state == UIGestureRecognizerStateEnded) {
-        [self _panGestureRecognizerEnded:sender];
-    }
-    else if (sender.state == UIGestureRecognizerStateCancelled) {
-        [self _panGestureRecognizerCancelled:sender];
+    switch (sender.state) {
+        case UIGestureRecognizerStateBegan: {
+            [self _panGestureRecognizerBegan:sender];
+        } break;
+        case UIGestureRecognizerStateChanged: {
+            [self _panGestureRecognizerChanged:sender];
+        } break;
+        case UIGestureRecognizerStateEnded: {
+            [self _panGestureRecognizerEnded:sender];
+        } break;
+        case UIGestureRecognizerStateCancelled: {
+            [self _panGestureRecognizerCancelled:sender];
+        } break;
+        default: break;
     }
 }
 
