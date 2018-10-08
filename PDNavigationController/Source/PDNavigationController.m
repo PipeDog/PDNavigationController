@@ -367,7 +367,10 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
 @implementation UIViewController (Properties)
 
 - (PDNavigationController *)navigationPage {
-    return (PDNavigationController *)self.navigationController;
+    if ([self.navigationController isKindOfClass:[PDNavigationController class]]) {
+        return (PDNavigationController *)self.navigationController;
+    }
+    return nil;
 }
 
 @end
