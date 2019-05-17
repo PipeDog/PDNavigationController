@@ -19,9 +19,3 @@
 - (void)popToRootViewControllerAnimated:(BOOL)animated completion:(void (^)(NSArray<__kindof UIViewController *> *viewControllers))completion;
 
 @end
-
-@interface UIViewController (Properties)
-
-@property (nonatomic, readonly, nullable) PDNavigationController *navigationPage;
-
-@end
