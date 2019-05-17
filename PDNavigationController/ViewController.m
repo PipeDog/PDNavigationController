@@ -42,33 +42,38 @@ static NSInteger kPageCount = 0;
 
 - (IBAction)popToRootPage:(id)sender {
     kPageCount = 0;
-    [self.navigationPage popToRootViewControllerAnimated:YES completion:nil];
+    PDNavigationController *navigationController = (PDNavigationController *)self.navigationController;
+    [navigationController popToRootViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)popToPage:(id)sender {
     kPageCount = 2;
+    PDNavigationController *navigationController = (PDNavigationController *)self.navigationController;
     
     for (UIViewController *vc in self.navigationController.viewControllers) {
         if ([vc.title integerValue] == kPageCount) {
-            [self.navigationPage popToViewController:vc animated:YES completion:nil];
+            [navigationController popToViewController:vc animated:YES completion:nil];
             break;
         }
     }
 }
 
 - (IBAction)popToLastPage:(id)sender {
-    [self.navigationPage popViewControllerAnimated:YES completion:nil];
+    PDNavigationController *navigationController = (PDNavigationController *)self.navigationController;
+    [navigationController popViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - PDBackButtonEventProtocol
 - (BOOL)specialBackButtonEvent {
-    [self.navigationPage popViewControllerAnimated:YES completion:nil];
+    PDNavigationController *navigationController = (PDNavigationController *)self.navigationController;
+    [navigationController popViewControllerAnimated:YES completion:nil];
     NSLog(@"===> %s", __FUNCTION__);
     return NO;
 }
 
 - (BOOL)regularBackButtonEvent {
-    [self.navigationPage popViewControllerAnimated:YES completion:nil];
+    PDNavigationController *navigationController = (PDNavigationController *)self.navigationController;
+    [navigationController popViewControllerAnimated:YES completion:nil];
     NSLog(@"===> %s", __FUNCTION__);
     return NO;
 }
