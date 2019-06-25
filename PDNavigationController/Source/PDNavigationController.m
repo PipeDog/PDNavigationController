@@ -214,7 +214,7 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
     frame.origin.x = x;
     self.view.frame = frame;
     
-    float alpha = kBlackMaskViewOriginAlpha - (x / 800.f);
+    float alpha = kBlackMaskViewOriginAlpha - (kBlackMaskViewOriginAlpha * (x / kScreenWidth));    
     self.blackMaskView.alpha = alpha;
     
     CGFloat aa = ABS(kScreenshotImageOriginalLeft) / kScreenWidth;
@@ -256,6 +256,7 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
                              CGRectGetHeight(self.view.bounds));
     self.screenShotImageView.frame = rect;
     [self.backgroundView insertSubview:self.screenShotImageView belowSubview:self.blackMaskView];
+    [self.view.superview insertSubview:self.backgroundView belowSubview:self.view];
 }
 
 - (void)animateForPopEndingWithBlock:(void (^)(UIViewController *viewController))block {
@@ -343,9 +344,10 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
 
 - (UIView *)backgroundView {
     if (!_backgroundView) {
-        self.backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds))];
-        [self.view.superview insertSubview:self.backgroundView belowSubview:self.view];
-        
+        _backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0,
+                                                                   0,
+                                                                   CGRectGetWidth(self.view.bounds),
+                                                                   CGRectGetHeight(self.view.bounds))];
         [_backgroundView addSubview:self.blackMaskView];
     }
     return _backgroundView;
@@ -353,7 +355,10 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
 
 - (UIView *)blackMaskView {
     if (!_blackMaskView) {
-        _blackMaskView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds))];
+        _blackMaskView = [[UIView alloc] initWithFrame:CGRectMake(0,
+                                                                  0,
+                                                                  CGRectGetWidth(self.view.bounds),
+                                                                  CGRectGetHeight(self.view.bounds))];
         _blackMaskView.backgroundColor = [UIColor blackColor];
     }
     return _blackMaskView;
