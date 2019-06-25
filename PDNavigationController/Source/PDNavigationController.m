@@ -237,7 +237,7 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    return image;
+    return image ?: [UIImage new];
 }
 
 - (void)preparePop {
