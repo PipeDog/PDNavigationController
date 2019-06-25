@@ -229,10 +229,11 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
 }
 
 - (UIImage *)capture {
-    UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, self.view.opaque, 0);
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+    UIGraphicsBeginImageContextWithOptions(window.bounds.size, window.opaque, 0);
     // -[CALayer renderInContext:] => -[UIView drawViewHierarchyInRect:afterScreenUpdates:]
     // From 0.2s+ => 0.05s+
-    [self.view drawViewHierarchyInRect:self.view.bounds afterScreenUpdates:NO];
+    [window drawViewHierarchyInRect:window.bounds afterScreenUpdates:NO];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
