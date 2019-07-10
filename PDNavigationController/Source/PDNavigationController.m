@@ -59,6 +59,11 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(paningGestureReceive:)];
     pan.delegate = self;
     [self.view addGestureRecognizer:pan];
+
+    self.view.layer.shadowOffset = CGSizeMake(-5, 0);
+    self.view.layer.shadowRadius = 10.f;
+    self.view.layer.shadowColor = RGBAColor(0x000000, 0.5f).CGColor;
+    self.view.layer.shadowOpacity = 0.5f;
 }
 
 #pragma mark - Custom Methods
