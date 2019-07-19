@@ -260,6 +260,12 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
                              CGRectGetWidth(self.view.bounds),
                              CGRectGetHeight(self.view.bounds));
     self.screenShotImageView.frame = rect;
+    
+    rect = CGRectMake(0,
+                      0,
+                      CGRectGetWidth(self.view.bounds),
+                      CGRectGetHeight(self.view.bounds));
+    self.blackMaskView.frame = rect;
     [self.backgroundView insertSubview:self.screenShotImageView belowSubview:self.blackMaskView];
     [self.view.superview insertSubview:self.backgroundView belowSubview:self.view];
 }
