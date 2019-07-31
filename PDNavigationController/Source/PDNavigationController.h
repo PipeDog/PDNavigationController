@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PDNavigationController : UINavigationController
 
 @property (nonatomic, assign) BOOL canDragBack; ///< Default is YES.
+@property (nonatomic, assign) CGRect enableDragBackRect; ///< Response to drag gesture area.
 
 - (void)popViewControllerAnimated:(BOOL)animated completion:(void (^ __nullable)(__kindof UIViewController *viewController))completion;
 

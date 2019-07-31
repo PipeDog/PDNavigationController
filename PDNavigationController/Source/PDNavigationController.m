@@ -10,7 +10,13 @@
 #import <QuartzCore/QuartzCore.h>
 #import <math.h>
 
-#define kScreenWidth [[UIScreen mainScreen] bounds].size.width
+#ifdef kScreenWidth
+#undef kScreenWidth
+    #define kScreenWidth [[UIScreen mainScreen] bounds].size.width
+#else
+    #define kScreenWidth [[UIScreen mainScreen] bounds].size.width
+#endif
+
 #define kKeyWindow [[UIApplication sharedApplication] keyWindow]
 
 static CGFloat const kScreenshotImageOriginalLeft = -150.f;
@@ -39,7 +45,8 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.canDragBack = YES;
+        _canDragBack = YES;
+        _enableDragBackRect = CGRectMake(0.f, 0.f, 100.f, CGRectGetHeight(self.view.bounds));
     }
     return self;
 }
@@ -47,7 +54,8 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.canDragBack = YES;
+        _canDragBack = YES;
+        _enableDragBackRect = CGRectMake(0.f, 0.f, 100.f, CGRectGetHeight(self.view.bounds));
     }
     return self;
 }
@@ -62,7 +70,7 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
 
     self.view.layer.shadowOffset = CGSizeMake(-5, 0);
     self.view.layer.shadowRadius = 10.f;
-    self.view.layer.shadowColor = RGBAColor(0x000000, 0.5f).CGColor;
+    self.view.layer.shadowColor = [[UIColor blackColor] colorWithAlphaComponent:0.5].CGColor;
     self.view.layer.shadowOpacity = 0.5f;
 }
 
@@ -146,14 +154,27 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
     return [super popToRootViewControllerAnimated:animated];
 }
 
-#pragma mark - Gesture Recognizer Methods
+#pragma mark - UIGestureRecognizerDelegate Methods
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     if (self.viewControllers.count <= 1 || !self.canDragBack) {
+        return NO;
+    }
+    CGPoint point = [touch locationInView:kKeyWindow];
+    if (!CGRectContainsPoint(self.enableDragBackRect, point)) {
         return NO;
     }
     return YES;
 }
 
+/*
+ Implement this method if you need to resolve gesture conflicts.
+ 
+ - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
+ }
+ */
+
+#pragma mark - Gesture Recognizer Methods
 - (void)paningGestureReceive:(UIPanGestureRecognizer *)sender {
     if (self.viewControllers.count <= 1 || !self.canDragBack) return;
     
@@ -219,7 +240,7 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
     frame.origin.x = x;
     self.view.frame = frame;
     
-    float alpha = kBlackMaskViewOriginAlpha - (kBlackMaskViewOriginAlpha * (x / kScreenWidth));    
+    float alpha = kBlackMaskViewOriginAlpha - (kBlackMaskViewOriginAlpha * (x / kScreenWidth));
     self.blackMaskView.alpha = alpha;
     
     CGFloat aa = ABS(kScreenshotImageOriginalLeft) / kScreenWidth;
@@ -337,12 +358,25 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
         CGRect frame = self.view.frame;
         frame.origin.x = 0;
         self.view.frame = frame;
-        
+
         self.moving = NO;
         self.backgroundView.hidden = YES;
-        
+
         if (block) block(viewControllers);
     }];
+}
+
+#pragma mark - Rotate Methods
+- (BOOL)shouldAutorotate {
+    return self.topViewController.shouldAutorotate;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    return self.topViewController.supportedInterfaceOrientations;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
+    return self.topViewController.preferredInterfaceOrientationForPresentation;
 }
 
 #pragma mark - Getter Methods
@@ -378,6 +412,7 @@ static CGFloat const kBlackMaskViewOriginAlpha = 0.4f;
 - (UIImageView *)screenShotImageView {
     if (!_screenShotImageView) {
         _screenShotImageView = [[UIImageView alloc] init];
+        _screenShotImageView.contentMode = UIViewContentModeScaleAspectFill;
     }
     return _screenShotImageView;
 }
